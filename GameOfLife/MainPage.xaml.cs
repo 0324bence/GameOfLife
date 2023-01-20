@@ -1,24 +1,56 @@
 ﻿using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Dynamic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace GameOfLife;
 
 public partial class MainPage : ContentPage
 {
-	public MainPage()
+
+    Drawable drawable = new();
+    bool isTimerStarted = false;
+    int intervalCounter = 0;
+    public MainPage()
 	{
 		InitializeComponent();
 
-        var drawable = new Drawable();
+        
         drawable.CanvasSizePX = (int)view.WidthRequest;
         view.Drawable = drawable;
+        drawable.localView = view;
 		view.StartInteraction += drawable.OnClick;
         view.MoveHoverInteraction += drawable.OnHoverMove;
         view.EndHoverInteraction += drawable.OnHoverEnd;
+        CountLabel.Text = $"Iteration: {intervalCounter}";
+    }
+
+    public void ToggleTimer() {
+        if (!isTimerStarted) {
+            IntervalMethod();
+            StartButton.Text = "Leállítás";
+            isTimerStarted = true;
+        } else {
+            StartButton.Text = "Indítás";
+            isTimerStarted = false;
+        }
+    }
+
+    public async Task IntervalMethod() {
+        Debug.WriteLine($"Test {intervalCounter}");
+        view.Invalidate();
+        intervalCounter++;
+        CountLabel.Text = $"Iteration: {intervalCounter}";
+        await Task.Delay(1000);
+        if (isTimerStarted) IntervalMethod();
+    }
+
+    public void StartButtonClick(object sender, EventArgs e) {
+        ToggleTimer();
     }
 }
 
@@ -49,6 +81,7 @@ struct Cell
 public class Drawable : IDrawable
 {
     public static readonly int GRID_SIZE = 50;
+    public GraphicsView localView;
 
     private int _canvasSizePx = 0;
     public int _gridSpacing = 0;
@@ -104,6 +137,9 @@ public class Drawable : IDrawable
         view.Invalidate();
     }
 
+    private int counter = 0;
+
+    
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
         canvas.FillColor = Colors.Red;
@@ -134,6 +170,7 @@ public class Drawable : IDrawable
         canvas.StrokeSize = 3;
         canvas.StrokeColor = Colors.Salmon;
         canvas.DrawRectangle(_previewPos.Col * _gridSpacing, _previewPos.Row * _gridSpacing, _gridSpacing, _gridSpacing);
+        Debug.WriteLine("refresh");
     }
 }
 

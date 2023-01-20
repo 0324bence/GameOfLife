@@ -2,12 +2,22 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GameOfLife.MainPage">
-
-    <GraphicsView
-        x:Name="view"
-        WidthRequest="900"
-        HeightRequest="900"
-        >
-    </GraphicsView>
+    <HorizontalStackLayout HorizontalOptions="Start" Padding="2">
+        <Grid WidthRequest="1000" VerticalOptions="Start" ColumnSpacing="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="200"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="900"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <GraphicsView x:Name="view" WidthRequest="900" HeightRequest="900" Grid.RowSpan="2" Grid.Column="0" Grid.Row="0">
+            </GraphicsView>
+            <Label x:Name="CountLabel" Grid.Column="1" Grid.Row="0" FontSize="20"/>
+            <Button Text="Indítás" x:Name="StartButton" VerticalOptions="End" Grid.Column="1" Grid.Row="1" Clicked="StartButtonClick"/>
+        </Grid>
+    </HorizontalStackLayout>
+    
 
 </ContentPage>
