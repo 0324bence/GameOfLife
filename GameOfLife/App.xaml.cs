@@ -24,6 +24,6 @@ public partial class App : Application
             presenter.IsResizable = false;
         });
 
-                MainPage = new MainPage();
+        MainPage = new MainPage();
 	}
 }

@@ -4,11 +4,10 @@
              x:Class="GameOfLife.MainPage">
 
     <GraphicsView
-        x:Name="graphics"
+        x:Name="view"
         WidthRequest="800"
         HeightRequest="800"
         >
-        
     </GraphicsView>
 
 </ContentPage>
