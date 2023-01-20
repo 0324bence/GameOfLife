@@ -34,6 +34,18 @@ struct Pos
     }
 }
 
+struct Cell
+{
+    public bool IsAlive;
+
+    public static implicit operator bool(in Cell c)
+    {
+        return c.IsAlive;
+    }
+
+    public void Toggle() => IsAlive = !IsAlive;
+}
+
 public class Drawable : IDrawable
 {
     public static readonly int GRID_SIZE = 50;
@@ -51,9 +63,22 @@ public class Drawable : IDrawable
 
     private Pos _previewPos = new Pos(-1, -1);
 
+    private Cell[][] _cells = new Cell[GRID_SIZE][];
+
+    public Drawable()
+    {
+        for (int i = 0; i < GRID_SIZE; ++i)
+        {
+            _cells[i] = new Cell[GRID_SIZE];
+        }
+    }
+
 	public void OnClick(object sender, TouchEventArgs e)
     {
-        Debug.WriteLine($"Click: {e.Touches.First().X}, {e.Touches.First().Y}");
+        int x = (int)e.Touches.First().X;
+        int y = (int)e.Touches.First().Y;
+        Debug.WriteLine($"Click: {x}, {y}");
+        _cells[x / _gridSpacing][y / _gridSpacing].Toggle();
 
         var view = (sender as GraphicsView);
         view.Invalidate();
@@ -81,6 +106,18 @@ public class Drawable : IDrawable
 
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
+        canvas.FillColor = Colors.Red;
+        for (int y = 0; y < GRID_SIZE; ++y)
+        {
+            for (int x = 0; x < GRID_SIZE; ++x)
+            {
+                if (_cells[x][y])
+                {
+                    canvas.FillRectangle(x * _gridSpacing, y * _gridSpacing, _gridSpacing, _gridSpacing);
+                }
+            }
+        }
+
         canvas.StrokeSize = 1;
         canvas.StrokeColor = Colors.Black;
 
