@@ -5,8 +5,8 @@
 
     <GraphicsView
         x:Name="view"
-        WidthRequest="800"
-        HeightRequest="800"
+        WidthRequest="900"
+        HeightRequest="900"
         >
     </GraphicsView>
 

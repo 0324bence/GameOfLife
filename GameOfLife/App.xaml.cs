@@ -19,7 +19,7 @@ public partial class App : Application
             IntPtr windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(nativeWindow);
             WindowId windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(windowHandle);
             AppWindow appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
-            appWindow.Resize(new SizeInt32(850, 850));
+            appWindow.Resize(new SizeInt32(920, 950));
             var presenter = appWindow.Presenter as OverlappedPresenter;
             presenter.IsResizable = false;
         });
