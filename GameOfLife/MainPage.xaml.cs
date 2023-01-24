@@ -29,7 +29,9 @@ public partial class MainPage : ContentPage
         CountLabel.Text = $"Iteration: {intervalCounter}";
     }
 
-    public void ToggleTimer() {
+    public void ToggleTimer()
+    {
+#pragma warning disable CS4014
         if (!isTimerStarted) {
             IntervalMethod();
             StartButton.Text = "Leállítás";
@@ -38,15 +40,19 @@ public partial class MainPage : ContentPage
             StartButton.Text = "Indítás";
             isTimerStarted = false;
         }
+#pragma warning restore CS4014
     }
 
-    public async Task IntervalMethod() {
+    public async Task IntervalMethod()
+    {
+#pragma warning disable CS4014
         Debug.WriteLine($"Test {intervalCounter}");
         view.Invalidate();
         intervalCounter++;
         CountLabel.Text = $"Iteration: {intervalCounter}";
         await Task.Delay(1000);
         if (isTimerStarted) IntervalMethod();
+#pragma warning restore CS4014
     }
 
     public void StartButtonClick(object sender, EventArgs e) {
@@ -136,9 +142,6 @@ public class Drawable : IDrawable
         var view = (sender as GraphicsView);
         view.Invalidate();
     }
-
-    private int counter = 0;
-
     
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
