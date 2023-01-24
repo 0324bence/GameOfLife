@@ -78,11 +78,27 @@ struct Pos
 struct Cell
 {
     public bool IsAlive;
+    public byte Age;
 
     public static implicit operator bool(in Cell c) => c.IsAlive;
     public static implicit operator int(in Cell c) => (c.IsAlive ? 1 : 0);
 
     public void Toggle() => IsAlive = !IsAlive;
+
+    public void StepAge()
+    {
+        var newAge = Age + 100;
+        if (newAge > 255)
+        {
+            newAge = 255;
+        }
+        Age = (byte)newAge;
+    }
+
+    public Color GetColor()
+    {
+        return new Color(Age, 255 - Age, 100);
+    }
 }
 
 public partial class MainPage
@@ -159,6 +175,7 @@ public partial class MainPage
                 {
                     if (_cells[x][y])
                     {
+                        canvas.FillColor = _cells[x][y].GetColor();
                         canvas.FillRectangle(x * _gridSpacing, y * _gridSpacing, _gridSpacing, _gridSpacing);
                     }
                 }
@@ -234,11 +251,14 @@ public partial class MainPage
                     else if (count == 3)
                     {
                         newCells[i][j].IsAlive = true;
+                        newCells[i][j].Age = 0;
                     }
                     else
                     {
                         newCells[i][j].IsAlive = false;
                     }
+
+                    newCells[i][j].StepAge();
                 }
             }
 
