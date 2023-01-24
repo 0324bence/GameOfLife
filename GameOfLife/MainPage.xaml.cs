@@ -12,14 +12,15 @@ namespace GameOfLife;
 public partial class MainPage : ContentPage
 {
 
-    Drawable drawable = new();
+    Drawable drawable;
     bool isTimerStarted = false;
     int intervalCounter = 0;
     public MainPage()
 	{
 		InitializeComponent();
 
-        
+        drawable = new(this);
+
         drawable.CanvasSizePX = (int)view.WidthRequest;
         view.Drawable = drawable;
         drawable.localView = view;
@@ -33,9 +34,9 @@ public partial class MainPage : ContentPage
     {
 #pragma warning disable CS4014
         if (!isTimerStarted) {
-            IntervalMethod();
             StartButton.Text = "Leállítás";
             isTimerStarted = true;
+            IntervalMethod();
         } else {
             StartButton.Text = "Indítás";
             isTimerStarted = false;
@@ -46,11 +47,11 @@ public partial class MainPage : ContentPage
     public async Task IntervalMethod()
     {
 #pragma warning disable CS4014
-        Debug.WriteLine($"Test {intervalCounter}");
+        drawable.StepSimulation();
         view.Invalidate();
         intervalCounter++;
         CountLabel.Text = $"Iteration: {intervalCounter}";
-        await Task.Delay(1000);
+        await Task.Delay(50);
         if (isTimerStarted) IntervalMethod();
 #pragma warning restore CS4014
     }
@@ -58,6 +59,8 @@ public partial class MainPage : ContentPage
     public void StartButtonClick(object sender, EventArgs e) {
         ToggleTimer();
     }
+
+    public partial class Drawable : IDrawable { }
 }
 
 struct Pos
@@ -76,104 +79,171 @@ struct Cell
 {
     public bool IsAlive;
 
-    public static implicit operator bool(in Cell c)
-    {
-        return c.IsAlive;
-    }
+    public static implicit operator bool(in Cell c) => c.IsAlive;
+    public static implicit operator int(in Cell c) => (c.IsAlive ? 1 : 0);
 
     public void Toggle() => IsAlive = !IsAlive;
 }
 
-public class Drawable : IDrawable
+public partial class MainPage
 {
-    public static readonly int GRID_SIZE = 50;
-    public GraphicsView localView;
-
-    private int _canvasSizePx = 0;
-    public int _gridSpacing = 0;
-    public int CanvasSizePX
+    public partial class Drawable : IDrawable
     {
-        get => _canvasSizePx;
-        set {
-            _canvasSizePx = value;
-            _gridSpacing = _canvasSizePx / GRID_SIZE;
-        }
-    }
+        public static readonly int GRID_SIZE = 50;
+        public GraphicsView localView;
 
-    private Pos _previewPos = new Pos(-1, -1);
-
-    private Cell[][] _cells = new Cell[GRID_SIZE][];
-
-    public Drawable()
-    {
-        for (int i = 0; i < GRID_SIZE; ++i)
+        private int _canvasSizePx = 0;
+        public int _gridSpacing = 0;
+        public int CanvasSizePX
         {
-            _cells[i] = new Cell[GRID_SIZE];
-        }
-    }
-
-	public void OnClick(object sender, TouchEventArgs e)
-    {
-        int x = (int)e.Touches.First().X;
-        int y = (int)e.Touches.First().Y;
-        Debug.WriteLine($"Click: {x}, {y}");
-        _cells[x / _gridSpacing][y / _gridSpacing].Toggle();
-
-        var view = (sender as GraphicsView);
-        view.Invalidate();
-    }
-
-    public void OnHoverMove(object sender, TouchEventArgs args)
-    {
-        Debug.WriteLine($"Hover: {args.Touches.First().X}, {args.Touches.First().Y}");
-
-        _previewPos.Col = (int)((args.Touches.First().X) / _gridSpacing);
-        _previewPos.Row = (int)((args.Touches.First().Y) / _gridSpacing);
-
-        var view = (sender as GraphicsView);
-        view.Invalidate();
-    }
-    public void OnHoverEnd(object sender, EventArgs args)
-    {
-        Debug.WriteLine($"Hover end");
-
-        _previewPos = new Pos(-1, -1);
-
-        var view = (sender as GraphicsView);
-        view.Invalidate();
-    }
-    
-    public void Draw(ICanvas canvas, RectF dirtyRect)
-    {
-        canvas.FillColor = Colors.Red;
-        for (int y = 0; y < GRID_SIZE; ++y)
-        {
-            for (int x = 0; x < GRID_SIZE; ++x)
+            get => _canvasSizePx;
+            set
             {
-                if (_cells[x][y])
-                {
-                    canvas.FillRectangle(x * _gridSpacing, y * _gridSpacing, _gridSpacing, _gridSpacing);
-                }
+                _canvasSizePx = value;
+                _gridSpacing = _canvasSizePx / GRID_SIZE;
             }
         }
 
-        canvas.StrokeSize = 1;
-        canvas.StrokeColor = Colors.Black;
+        private Pos _previewPos = new Pos(-1, -1);
 
-        for (int i = 0; i <= CanvasSizePX; i += _gridSpacing)
+        private Cell[][] _cells = new Cell[GRID_SIZE][];
+
+        private MainPage _mainPage;
+
+        public Drawable(MainPage mainPage)
         {
-            canvas.DrawLine(i, 0, i, CanvasSizePX);
+            for (int i = 0; i < GRID_SIZE; ++i)
+            {
+                _cells[i] = new Cell[GRID_SIZE];
+            }
+            _mainPage = mainPage;
         }
 
-        for (int i = 0; i <= CanvasSizePX; i += _gridSpacing)
+        public void OnClick(object sender, TouchEventArgs e)
         {
-            canvas.DrawLine(0, i, CanvasSizePX, i);
+            int x = (int)e.Touches.First().X;
+            int y = (int)e.Touches.First().Y;
+            Debug.WriteLine($"Click: {x}, {y}");
+            _cells[x / _gridSpacing][y / _gridSpacing].Toggle();
+
+            var view = (sender as GraphicsView);
+            view.Invalidate();
         }
 
-        canvas.StrokeSize = 3;
-        canvas.StrokeColor = Colors.Salmon;
-        canvas.DrawRectangle(_previewPos.Col * _gridSpacing, _previewPos.Row * _gridSpacing, _gridSpacing, _gridSpacing);
-        Debug.WriteLine("refresh");
+        public void OnHoverMove(object sender, TouchEventArgs args)
+        {
+            Debug.WriteLine($"Hover: {args.Touches.First().X}, {args.Touches.First().Y}");
+
+            _previewPos.Col = (int)((args.Touches.First().X) / _gridSpacing);
+            _previewPos.Row = (int)((args.Touches.First().Y) / _gridSpacing);
+
+            var view = (sender as GraphicsView);
+            view.Invalidate();
+        }
+        public void OnHoverEnd(object sender, EventArgs args)
+        {
+            Debug.WriteLine($"Hover end");
+
+            _previewPos = new Pos(-1, -1);
+
+            var view = (sender as GraphicsView);
+            view.Invalidate();
+        }
+
+        public void Draw(ICanvas canvas, RectF dirtyRect)
+        {
+            canvas.FillColor = Colors.Red;
+            for (int y = 0; y < GRID_SIZE; ++y)
+            {
+                for (int x = 0; x < GRID_SIZE; ++x)
+                {
+                    if (_cells[x][y])
+                    {
+                        canvas.FillRectangle(x * _gridSpacing, y * _gridSpacing, _gridSpacing, _gridSpacing);
+                    }
+                }
+            }
+
+            canvas.StrokeSize = 1;
+            canvas.StrokeColor = Colors.Black;
+
+            for (int i = 0; i <= CanvasSizePX; i += _gridSpacing)
+            {
+                canvas.DrawLine(i, 0, i, CanvasSizePX);
+            }
+
+            for (int i = 0; i <= CanvasSizePX; i += _gridSpacing)
+            {
+                canvas.DrawLine(0, i, CanvasSizePX, i);
+            }
+
+            canvas.StrokeSize = 3;
+            canvas.StrokeColor = Colors.Salmon;
+            canvas.DrawRectangle(_previewPos.Col * _gridSpacing, _previewPos.Row * _gridSpacing, _gridSpacing, _gridSpacing);
+            //Debug.WriteLine("refresh");
+        }
+
+        public int CountNeighbours(int x, int y)
+        {
+            int count = 0;
+            if (y - 1 >= 0)
+            {
+                if (x - 1 >= 0)
+                    count += _cells[x - 1][y - 1];
+                count += _cells[x + 0][y - 1];
+                if (x + 1 < GRID_SIZE)
+                    count += _cells[x + 1][y - 1];
+            }
+
+            if (x - 1 >= 0)
+                count += _cells[x - 1][y + 0];
+            if (x + 1 < GRID_SIZE)
+                count += _cells[x + 1][y + 0];
+
+            if (y + 1 < GRID_SIZE)
+            {
+                if (x - 1 >= 0)
+                    count += _cells[x - 1][y + 1];
+                count += _cells[x + 0][y + 1];
+                if (x + 1 < GRID_SIZE)
+                    count += _cells[x + 1][y + 1];
+            }
+
+            return count;
+        }
+
+        public void StepSimulation()
+        {
+            Debug.WriteLine("Step");
+
+            var newCells = _cells.Select(x => x.ToArray()).ToArray();
+            for (int i = 0; i < GRID_SIZE; i++)
+            {
+                for (int j = 0; j < GRID_SIZE; j++)
+                {
+                    var count = CountNeighbours(i, j);
+
+                    if (count < 2)
+                    {
+                        newCells[i][j].IsAlive = false;
+                    }
+                    else if (count == 2)
+                    {
+                        // NOP
+                    }
+                    else if (count == 3)
+                    {
+                        newCells[i][j].IsAlive = true;
+                    }
+                    else
+                    {
+                        newCells[i][j].IsAlive = false;
+                    }
+                }
+            }
+
+            _cells = newCells;
+        }
     }
 }
 
