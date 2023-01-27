@@ -25,6 +25,7 @@ public partial class MainPage : ContentPage
         view.Drawable = drawable;
         drawable.localView = view;
 		view.StartInteraction += drawable.OnClick;
+        view.EndInteraction += drawable.OnClickEnd;
         view.MoveHoverInteraction += drawable.OnHoverMove;
         view.EndHoverInteraction += drawable.OnHoverEnd;
         CountLabel.Text = $"Iteration: {intervalCounter}";
@@ -116,6 +117,7 @@ public partial class MainPage
         }
 
         private Pos _previewPos = new Pos(-1, -1);
+        private bool _isMouseDown = false;
 
         private Cell[][] _cells = new Cell[GRID_SIZE][];
 
@@ -137,9 +139,19 @@ public partial class MainPage
             Debug.WriteLine($"Click: {x}, {y}");
             _cells[x / _gridSpacing][y / _gridSpacing].Toggle();
             _cells[x / _gridSpacing][y / _gridSpacing].Age = 0;
+            _isMouseDown = true;
 
             var view = (sender as GraphicsView);
             view.Invalidate();
+        }
+
+        public void OnClickEnd(object sender, TouchEventArgs e)
+        {
+            int x = (int)e.Touches.First().X;
+            int y = (int)e.Touches.First().Y;
+            Debug.WriteLine($"Click end: {x}, {y}");
+
+            _isMouseDown = false;
         }
 
         public void OnHoverMove(object sender, TouchEventArgs args)
@@ -148,6 +160,19 @@ public partial class MainPage
 
             _previewPos.Col = (int)((args.Touches.First().X) / _gridSpacing);
             _previewPos.Row = (int)((args.Touches.First().Y) / _gridSpacing);
+
+            if (_isMouseDown)
+            {
+                int x = (int)args.Touches.First().X;
+                int y = (int)args.Touches.First().Y;
+                int col = x / _gridSpacing;
+                int row = y / _gridSpacing;
+                if (col >= 0 && col < GRID_SIZE && row >= 0 && row < GRID_SIZE)
+                {
+                    _cells[col][row].IsAlive = true;
+                    _cells[col][row].Age = 0;
+                }
+            }
 
             var view = (sender as GraphicsView);
             view.Invalidate();
