@@ -61,6 +61,14 @@ public partial class MainPage : ContentPage
         ToggleTimer();
     }
 
+    public bool ShowGrid = true;
+
+    private void ShowGridCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        ShowGrid = e.Value;
+        view.Invalidate();
+    }
+
     public partial class Drawable : IDrawable { }
 }
 

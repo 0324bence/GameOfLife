@@ -7,6 +7,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="200"/>
+                <RowDefinition Height="200"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="900"/>
@@ -14,7 +15,19 @@
             </Grid.ColumnDefinitions>
             <GraphicsView x:Name="view" WidthRequest="900" HeightRequest="900" Grid.RowSpan="2" Grid.Column="0" Grid.Row="0">
             </GraphicsView>
-            <Label x:Name="CountLabel" Grid.Column="1" Grid.Row="0" FontSize="20"/>
+            <VerticalStackLayout Grid.Column="2" Grid.Row="0">
+                <Label x:Name="CountLabel" FontSize="20"/>
+                <HorizontalStackLayout>
+                    <Label Text="Show grid: " VerticalOptions="Center">
+                        <!--
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer/>
+                        </Label.GestureRecognizers>
+                        -->
+                    </Label>
+                    <CheckBox x:Name="ShowGridCheckBox" IsChecked="True" CheckedChanged="ShowGridCheckBox_CheckedChanged"/>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
             <Button Text="Indítás" x:Name="StartButton" VerticalOptions="End" Grid.Column="1" Grid.Row="1" Clicked="StartButtonClick"/>
         </Grid>
     </HorizontalStackLayout>

@@ -15,7 +15,7 @@ public partial class App : Application
 
         Microsoft.Maui.Handlers.WindowHandler.Mapper.AppendToMapping(nameof(IWindow), (handler, view) =>
         {
-            int WINDOW_WIDTH = 1020;
+            int WINDOW_WIDTH = 1120;
             int WINDOW_HEIGHT = 950;
             var mauiWindow = handler.VirtualView;
             var nativeWindow = handler.PlatformView;
