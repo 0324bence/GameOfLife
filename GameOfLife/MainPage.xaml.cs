@@ -189,6 +189,9 @@ public partial class MainPage
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
+            canvas.FillColor = Colors.White;
+            canvas.FillRectangle(0, 0, CanvasSizePX, CanvasSizePX);
+
             for (int y = 0; y < GRID_SIZE; ++y)
             {
                 for (int x = 0; x < GRID_SIZE; ++x)
