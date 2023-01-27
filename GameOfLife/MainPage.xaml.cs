@@ -78,7 +78,7 @@ struct Pos
 struct Cell
 {
     public bool IsAlive;
-    public byte Age;
+    public uint Age;
 
     public static implicit operator bool(in Cell c) => c.IsAlive;
     public static implicit operator int(in Cell c) => (c.IsAlive ? 1 : 0);
@@ -87,17 +87,12 @@ struct Cell
 
     public void StepAge()
     {
-        var newAge = Age + 100;
-        if (newAge > 255)
-        {
-            newAge = 255;
-        }
-        Age = (byte)newAge;
+        Age += 5;
     }
 
     public Color GetColor()
     {
-        return new Color(Age, 255 - Age, 100);
+        return Color.FromHsla(Age%360/360.0f, 1, 0.5, 1);
     }
 }
 
@@ -141,6 +136,7 @@ public partial class MainPage
             int y = (int)e.Touches.First().Y;
             Debug.WriteLine($"Click: {x}, {y}");
             _cells[x / _gridSpacing][y / _gridSpacing].Toggle();
+            _cells[x / _gridSpacing][y / _gridSpacing].Age = 0;
 
             var view = (sender as GraphicsView);
             view.Invalidate();
@@ -168,7 +164,6 @@ public partial class MainPage
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
-            canvas.FillColor = Colors.Red;
             for (int y = 0; y < GRID_SIZE; ++y)
             {
                 for (int x = 0; x < GRID_SIZE; ++x)
