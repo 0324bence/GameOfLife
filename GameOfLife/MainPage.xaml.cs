@@ -15,6 +15,7 @@ public partial class MainPage : ContentPage
     Drawable drawable;
     bool isTimerStarted = false;
     int intervalCounter = 0;
+    int intervalSpeed = 500;
     public MainPage()
 	{
 		InitializeComponent();
@@ -52,7 +53,7 @@ public partial class MainPage : ContentPage
         view.Invalidate();
         intervalCounter++;
         CountLabel.Text = $"Iteration: {intervalCounter}";
-        await Task.Delay(50);
+        await Task.Delay(intervalSpeed);
         if (isTimerStarted) IntervalMethod();
 #pragma warning restore CS4014
     }
@@ -61,15 +62,22 @@ public partial class MainPage : ContentPage
         ToggleTimer();
     }
 
-    public bool ShowGrid = true;
-
     private void ShowGridCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
     {
-        ShowGrid = e.Value;
+        drawable.toggleGrid();
         view.Invalidate();
     }
 
     public partial class Drawable : IDrawable { }
+
+    private void timeSlider_ValueChanged(object sender, ValueChangedEventArgs e)
+    {
+        Slider slider = (Slider)sender;
+        int value = (int)Math.Floor(e.NewValue);
+        slider.Value = value;
+        sliderLabel.Text = $"Iteration frequency: {value/10}%";
+        intervalSpeed = 1010 - value;
+    }
 }
 
 struct Pos
@@ -130,6 +138,12 @@ public partial class MainPage
         private Cell[][] _cells = new Cell[GRID_SIZE][];
 
         private MainPage _mainPage;
+
+        private bool _showGrid = true;
+        public void toggleGrid()
+        {
+            _showGrid = !_showGrid;
+        }
 
         public Drawable(MainPage mainPage)
         {
@@ -212,18 +226,22 @@ public partial class MainPage
                 }
             }
 
-            canvas.StrokeSize = 1;
-            canvas.StrokeColor = Colors.Black;
-
-            for (int i = 0; i <= CanvasSizePX; i += _gridSpacing)
+            if (_showGrid)
             {
-                canvas.DrawLine(i, 0, i, CanvasSizePX);
-            }
+                canvas.StrokeSize = 1;
+                canvas.StrokeColor = Colors.Black;
 
-            for (int i = 0; i <= CanvasSizePX; i += _gridSpacing)
-            {
-                canvas.DrawLine(0, i, CanvasSizePX, i);
+                for (int i = 0; i <= CanvasSizePX; i += _gridSpacing)
+                {
+                    canvas.DrawLine(i, 0, i, CanvasSizePX);
+                }
+
+                for (int i = 0; i <= CanvasSizePX; i += _gridSpacing)
+                {
+                    canvas.DrawLine(0, i, CanvasSizePX, i);
+                }
             }
+            
 
             canvas.StrokeSize = 3;
             canvas.StrokeColor = Colors.Salmon;
