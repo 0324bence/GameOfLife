@@ -60,6 +60,7 @@ public partial class MainPage : ContentPage
 
     public void StartButtonClick(object sender, EventArgs e) {
         ToggleTimer();
+        StepButton.IsEnabled = !StepButton.IsEnabled;
     }
 
     private void ShowGridCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
@@ -77,6 +78,12 @@ public partial class MainPage : ContentPage
         slider.Value = value;
         sliderLabel.Text = $"Iteration frequency: {value/10}%";
         intervalSpeed = 1010 - value;
+    }
+
+    private void StepButton_Clicked(object sender, EventArgs e)
+    {
+        drawable.StepSimulation();
+        view.Invalidate();
     }
 }
 

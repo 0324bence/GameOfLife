@@ -33,7 +33,11 @@
                     <Slider x:Name="timeSlider" Minimum="10" Maximum="1000" Value="500" ValueChanged="timeSlider_ValueChanged"/>
                 </VerticalStackLayout>
             </VerticalStackLayout>
-            <Button Text="Indítás" x:Name="StartButton" VerticalOptions="End" Grid.Column="1" Grid.Row="1" Clicked="StartButtonClick"/>
+            <VerticalStackLayout Grid.Column="1" Grid.Row="1" VerticalOptions="End">
+                <Button Text="Indítás" x:Name="StartButton" Clicked="StartButtonClick"/>
+                <Button Text="Lépés" x:Name="StepButton" Clicked="StepButton_Clicked"/>
+            </VerticalStackLayout>
+            
         </Grid>
     </HorizontalStackLayout>
     
