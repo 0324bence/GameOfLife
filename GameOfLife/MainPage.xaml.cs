@@ -30,6 +30,8 @@ public partial class MainPage : ContentPage
         view.MoveHoverInteraction += drawable.OnHoverMove;
         view.EndHoverInteraction += drawable.OnHoverEnd;
         CountLabel.Text = $"Iteration: {intervalCounter}";
+
+        ColorModePicker.SelectedIndex = 0;
     }
 
     public void ToggleTimer()
@@ -85,6 +87,21 @@ public partial class MainPage : ContentPage
         drawable.StepSimulation();
         view.Invalidate();
     }
+
+    enum ColorChangeMode
+    {
+        Rainbow,
+        Gradient,
+        Constant,
+    };
+
+    ColorChangeMode _colorChangeMode;
+
+    private void ColorModePicker_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        var picker = sender as Picker;
+        _colorChangeMode = (ColorChangeMode)picker.SelectedIndex;
+    }
 }
 
 struct Pos
@@ -104,6 +121,9 @@ struct Cell
     public bool IsAlive;
     public uint Age;
 
+    public static Color Color1 = Colors.Red;
+    public static Color Color2 = Colors.Blue;
+
     public static implicit operator bool(in Cell c) => c.IsAlive;
     public static implicit operator int(in Cell c) => (c.IsAlive ? 1 : 0);
 
@@ -114,9 +134,19 @@ struct Cell
         Age += 5;
     }
 
-    public Color GetColor()
+    public Color GetColorRainbow()
     {
         return Color.FromHsla(Age%360/360.0f, 1, 0.5, 1);
+    }
+
+    public Color GetColorGradient()
+    {
+        float ratio2 = Math.Min(Age/100.0f, 1.0f);
+        float ratio1 = 1.0f - ratio2;
+        return new Color(
+            Color1.Red * ratio1 + Color2.Red * ratio2,
+            Color1.Green * ratio1 + Color2.Green * ratio2,
+            Color1.Blue * ratio1 + Color2.Blue * ratio2);
     }
 }
 
@@ -227,7 +257,21 @@ public partial class MainPage
                 {
                     if (_cells[x][y])
                     {
-                        canvas.FillColor = _cells[x][y].GetColor();
+                        switch (_mainPage._colorChangeMode)
+                        {
+                        case ColorChangeMode.Rainbow:
+                            canvas.FillColor = _cells[x][y].GetColorRainbow();
+                            break;
+
+                        case ColorChangeMode.Gradient:
+                            canvas.FillColor = _cells[x][y].GetColorGradient();
+                            break;
+
+                        case ColorChangeMode.Constant:
+                            canvas.FillColor = Cell.Color1;
+                            break;
+                        }
+                        
                         canvas.FillRectangle(x * _gridSpacing, y * _gridSpacing, _gridSpacing, _gridSpacing);
                     }
                 }

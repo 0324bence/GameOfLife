@@ -32,6 +32,15 @@
                     <Label x:Name="sliderLabel" Text="Iteration ferquency: 50%"/>
                     <Slider x:Name="timeSlider" Minimum="10" Maximum="1000" Value="500" ValueChanged="timeSlider_ValueChanged"/>
                 </VerticalStackLayout>
+                <Picker x:Name="ColorModePicker" Title="Szín" SelectedIndexChanged="ColorModePicker_SelectedIndexChanged">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Szivárvány</x:String>
+                            <x:String>Átmenet</x:String>
+                            <x:String>Állandó</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
             </VerticalStackLayout>
             <VerticalStackLayout Grid.Column="1" Grid.Row="1" VerticalOptions="End">
                 <Button Text="Indítás" x:Name="StartButton" Clicked="StartButtonClick"/>
