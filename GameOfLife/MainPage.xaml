@@ -29,7 +29,7 @@
                     <CheckBox x:Name="ShowGridCheckBox" IsChecked="True" CheckedChanged="ShowGridCheckBox_CheckedChanged"/>
                 </HorizontalStackLayout>
                 <VerticalStackLayout>
-                    <Label x:Name="sliderLabel" Text="Iteration ferquency: 50%"/>
+                    <Label x:Name="sliderLabel" Text="Iteration frequency: 50%"/>
                     <Slider x:Name="timeSlider" Minimum="10" Maximum="1000" Value="500" ValueChanged="timeSlider_ValueChanged"/>
                 </VerticalStackLayout>
                 <Picker x:Name="ColorModePicker" Title="Szín" SelectedIndexChanged="ColorModePicker_SelectedIndexChanged">
@@ -41,6 +41,9 @@
                         </x:Array>
                     </Picker.ItemsSource>
                 </Picker>
+                <HorizontalStackLayout>
+                    <Label Text="Végtelen élettér" VerticalOptions="Center"></Label>
+                    <CheckBox x:Name="InfiniteModeCheckbox" IsChecked="False" CheckedChanged="InfiniteModeCheckbox_CheckedChanged"></CheckBox></HorizontalStackLayout>
             </VerticalStackLayout>
             <VerticalStackLayout Grid.Column="1" Grid.Row="1" VerticalOptions="End">
                 <Button Text="Indítás" x:Name="StartButton" Clicked="StartButtonClick"/>

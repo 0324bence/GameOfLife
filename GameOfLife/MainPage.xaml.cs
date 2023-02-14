@@ -6,6 +6,7 @@ using System.Dynamic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Windows.Graphics.Printing.OptionDetails;
 
 namespace GameOfLife;
 
@@ -101,6 +102,13 @@ public partial class MainPage : ContentPage
     {
         var picker = sender as Picker;
         _colorChangeMode = (ColorChangeMode)picker.SelectedIndex;
+    }
+
+    bool _infiniteMode = false;
+
+    private void InfiniteModeCheckbox_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        _infiniteMode = !_infiniteMode;
     }
 }
 
@@ -300,30 +308,55 @@ public partial class MainPage
             //Debug.WriteLine("refresh");
         }
 
+        public int LimitCoord(int coord)
+        {
+            if (coord == -1)
+                return GRID_SIZE - 1;
+            if (coord == GRID_SIZE)
+                return 0;
+            return coord;
+        }
+
         public int CountNeighbours(int x, int y)
         {
             int count = 0;
-            if (y - 1 >= 0)
+            if (_mainPage._infiniteMode)
             {
-                if (x - 1 >= 0)
-                    count += _cells[x - 1][y - 1];
-                count += _cells[x + 0][y - 1];
-                if (x + 1 < GRID_SIZE)
-                    count += _cells[x + 1][y - 1];
+                count += _cells[LimitCoord(x - 1)][LimitCoord(y - 1)];
+                count += _cells[LimitCoord(x + 0)][LimitCoord(y - 1)];
+                count += _cells[LimitCoord(x + 1)][LimitCoord(y - 1)];
+
+                count += _cells[LimitCoord(x - 1)][LimitCoord(y + 0)];
+                count += _cells[LimitCoord(x + 1)][LimitCoord(y + 0)];
+
+                count += _cells[LimitCoord(x - 1)][LimitCoord(y + 1)];
+                count += _cells[LimitCoord(x + 0)][LimitCoord(y + 1)];
+                count += _cells[LimitCoord(x + 1)][LimitCoord(y + 1)];
             }
-
-            if (x - 1 >= 0)
-                count += _cells[x - 1][y + 0];
-            if (x + 1 < GRID_SIZE)
-                count += _cells[x + 1][y + 0];
-
-            if (y + 1 < GRID_SIZE)
+            else
             {
+                if (y - 1 >= 0)
+                {
+                    if (x - 1 >= 0)
+                        count += _cells[x - 1][y - 1];
+                    count += _cells[x + 0][y - 1];
+                    if (x + 1 < GRID_SIZE)
+                        count += _cells[x + 1][y - 1];
+                }
+
                 if (x - 1 >= 0)
-                    count += _cells[x - 1][y + 1];
-                count += _cells[x + 0][y + 1];
+                    count += _cells[x - 1][y + 0];
                 if (x + 1 < GRID_SIZE)
-                    count += _cells[x + 1][y + 1];
+                    count += _cells[x + 1][y + 0];
+
+                if (y + 1 < GRID_SIZE)
+                {
+                    if (x - 1 >= 0)
+                        count += _cells[x - 1][y + 1];
+                    count += _cells[x + 0][y + 1];
+                    if (x + 1 < GRID_SIZE)
+                        count += _cells[x + 1][y + 1];
+                }
             }
 
             return count;
