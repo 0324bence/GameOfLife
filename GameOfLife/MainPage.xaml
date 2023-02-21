@@ -48,6 +48,7 @@
             <VerticalStackLayout Grid.Column="1" Grid.Row="1" VerticalOptions="End">
                 <Button Text="Indítás" x:Name="StartButton" Clicked="StartButtonClick"/>
                 <Button Text="Lépés" x:Name="StepButton" Clicked="StepButton_Clicked"/>
+                <Button Text="Alaphelyzet" x:Name="ResetButton" Clicked="ResetButton_Clicked"/>
             </VerticalStackLayout>
             
         </Grid>

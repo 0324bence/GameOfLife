@@ -68,7 +68,7 @@ public partial class MainPage : ContentPage
 
     private void ShowGridCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
     {
-        drawable.toggleGrid();
+        drawable.ToggleGrid();
         view.Invalidate();
     }
 
@@ -109,6 +109,19 @@ public partial class MainPage : ContentPage
     private void InfiniteModeCheckbox_CheckedChanged(object sender, CheckedChangedEventArgs e)
     {
         _infiniteMode = !_infiniteMode;
+    }
+
+    private void ResetButton_Clicked(object sender, EventArgs e)
+    {
+        if (isTimerStarted)
+        {
+            ToggleTimer();
+            StepButton.IsEnabled = !StepButton.IsEnabled;
+        }
+        intervalCounter = 0;
+        drawable.ResetGrid();
+        CountLabel.Text = $"Ciklus: {intervalCounter}";
+        view.Invalidate();
     }
 }
 
@@ -185,7 +198,15 @@ public partial class MainPage
         private MainPage _mainPage;
 
         private bool _showGrid = true;
-        public void toggleGrid()
+
+        public void ResetGrid()
+        {           
+            for (int i = 0; i < GRID_SIZE; ++i)
+            {
+                _cells[i] = new Cell[GRID_SIZE];
+            }
+        }
+        public void ToggleGrid()
         {
             _showGrid = !_showGrid;
         }
