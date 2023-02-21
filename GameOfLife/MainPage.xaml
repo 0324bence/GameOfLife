@@ -19,7 +19,7 @@
             <VerticalStackLayout Grid.Column="2" Grid.Row="0">
                 <Label x:Name="CountLabel" FontSize="20"/>
                 <HorizontalStackLayout>
-                    <Label Text="Show grid: " VerticalOptions="Center">
+                    <Label Text="Rács mutatása: " VerticalOptions="Center">
                         <!--
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer/>
@@ -29,7 +29,7 @@
                     <CheckBox x:Name="ShowGridCheckBox" IsChecked="True" CheckedChanged="ShowGridCheckBox_CheckedChanged"/>
                 </HorizontalStackLayout>
                 <VerticalStackLayout>
-                    <Label x:Name="sliderLabel" Text="Iteration frequency: 50%"/>
+                    <Label x:Name="sliderLabel" Text="Sebesség: 50%"/>
                     <Slider x:Name="timeSlider" Minimum="10" Maximum="1000" Value="500" ValueChanged="timeSlider_ValueChanged"/>
                 </VerticalStackLayout>
                 <Picker x:Name="ColorModePicker" Title="Szín" SelectedIndexChanged="ColorModePicker_SelectedIndexChanged">

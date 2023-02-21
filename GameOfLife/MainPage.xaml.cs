@@ -30,7 +30,7 @@ public partial class MainPage : ContentPage
         view.EndInteraction += drawable.OnClickEnd;
         view.MoveHoverInteraction += drawable.OnHoverMove;
         view.EndHoverInteraction += drawable.OnHoverEnd;
-        CountLabel.Text = $"Iteration: {intervalCounter}";
+        CountLabel.Text = $"Ciklus: {intervalCounter}";
 
         ColorModePicker.SelectedIndex = 0;
     }
@@ -55,7 +55,7 @@ public partial class MainPage : ContentPage
         drawable.StepSimulation();
         view.Invalidate();
         intervalCounter++;
-        CountLabel.Text = $"Iteration: {intervalCounter}";
+        CountLabel.Text = $"Ciklus: {intervalCounter}";
         await Task.Delay(intervalSpeed);
         if (isTimerStarted) IntervalMethod();
 #pragma warning restore CS4014
@@ -79,7 +79,7 @@ public partial class MainPage : ContentPage
         Slider slider = (Slider)sender;
         int value = (int)Math.Floor(e.NewValue);
         slider.Value = value;
-        sliderLabel.Text = $"Iteration frequency: {value/10}%";
+        sliderLabel.Text = $"Sebesség: {value/10}%";
         intervalSpeed = 1010 - value;
     }
 
@@ -203,7 +203,7 @@ public partial class MainPage
         {
             int x = (int)e.Touches.First().X;
             int y = (int)e.Touches.First().Y;
-            Debug.WriteLine($"Click: {x}, {y}");
+            //Debug.WriteLine($"Click: {x}, {y}");
             _cells[x / _gridSpacing][y / _gridSpacing].Toggle();
             _cells[x / _gridSpacing][y / _gridSpacing].Age = 0;
             _isMouseDown = true;
@@ -216,14 +216,14 @@ public partial class MainPage
         {
             int x = (int)e.Touches.First().X;
             int y = (int)e.Touches.First().Y;
-            Debug.WriteLine($"Click end: {x}, {y}");
+            //Debug.WriteLine($"Click end: {x}, {y}");
 
             _isMouseDown = false;
         }
 
         public void OnHoverMove(object sender, TouchEventArgs args)
         {
-            Debug.WriteLine($"Hover: {args.Touches.First().X}, {args.Touches.First().Y}");
+            //Debug.WriteLine($"Hover: {args.Touches.First().X}, {args.Touches.First().Y}");
 
             _previewPos.Col = (int)((args.Touches.First().X) / _gridSpacing);
             _previewPos.Row = (int)((args.Touches.First().Y) / _gridSpacing);
@@ -246,7 +246,7 @@ public partial class MainPage
         }
         public void OnHoverEnd(object sender, EventArgs args)
         {
-            Debug.WriteLine($"Hover end");
+            //Debug.WriteLine($"Hover end");
 
             _previewPos = new Pos(-1, -1);
 
@@ -364,7 +364,7 @@ public partial class MainPage
 
         public void StepSimulation()
         {
-            Debug.WriteLine("Step");
+            //Debug.WriteLine("Step");
 
             var newCells = _cells.Select(x => x.ToArray()).ToArray();
             for (int i = 0; i < GRID_SIZE; i++)
